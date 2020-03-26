@@ -1,0 +1,108 @@
+<!DOCTYPE HTML>
+<html>
+    <head>  
+        <script>
+window.onload = function () {
+    IntTempPts = [];
+    ExtTempPts = [];
+    PressurePts = [];
+
+    var IntTempChart = new CanvasJS.Chart("IntTempChart", {
+        exportEnabled: true,
+        animationEnabled: true,
+        title:{
+            text: "Internal Temperature"
+        },
+        axisX:{
+            title:"time",
+        },
+        axisY:{
+            title:"Int Temp (C)"
+        },
+        data: [{        
+            type: "line",       
+            dataPoints: IntTempPts,
+        }]
+    });
+    IntTempChart.render();
+
+    var ExtTempChart = new CanvasJS.Chart("ExtTempChart", {
+        exportEnabled: true,
+        animationEnabled: true,
+        title:{
+            text: "External Temperature"
+        },
+        axisX:{
+            title:"time",
+        },
+        axisY:{
+            title:"Ext Temp (C)"
+        },
+        data: [{        
+            type: "line",       
+            dataPoints: ExtTempPts,
+        }]
+    });
+    ExtTempChart.render();
+
+    var PressureChart = new CanvasJS.Chart("PressureChart", {
+        exportEnabled: true,
+        animationEnabled: true,
+        title:{
+            text: "Pressure"
+        },
+        axisX:{
+            title:"time",
+        },
+        axisY:{
+            title:"Pressure (kPa)"
+        },
+        data: [{        
+            type: "line",       
+            dataPoints: PressurePts,
+        }]
+    });
+    PressureChart.render();
+
+    var updateChart = function(hhmmss,temp) {
+        IntTempPts.push({x:hhmmss,y:temp});
+        IntTempChart.render();
+    }
+
+    var ws = new WebSocket('ws://' + location.host + ':8080/');
+    ws.onmessage = function(event) {
+        var nmeaString = event.data;
+        var gpgga = nmeaString.split(',');
+        if(gpgga.length > 1) {
+        var hhmmss = gpgga[1];
+        // change from UTC to PST
+        var hh = parseInt(hhmmss.substring(0,2));
+        if(hh > 7) {
+            hh = hh - 7;
+        }
+        else {
+            hh = hh + 17;
+        }
+        var mm = hhmmss.substring(2,4);
+        var ss = hhmmss.substring(4,6);
+        var intTemp = parseFloat(gpgga[9]);
+            var extTemp = parseFloat(gpgga[8]);
+            var pressure = parseFloat(gpgga[11]);
+            IntTempPts.push({y:intTemp});
+            ExtTempPts.push({y:extTemp});
+            PressurePts.push({y:pressure});
+            IntTempChart.render();
+            ExtTempChart.render();
+            PressureChart.render();
+        }
+    };
+};
+        </script>
+    </head>
+    <body>
+        <p><div id="IntTempChart" style="height: 300px; width: 80%;"></div></p>
+        <p><div id="ExtTempChart" style="height: 300px; width: 80%;"></div></p>
+        <p><div id="PressureChart" style="height: 300px; width: 80%;"></div></p>
+        <script src="./canvasjs.min.js"></script>
+    </body>
+</html>

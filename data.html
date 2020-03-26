@@ -1,0 +1,93 @@
+<html>
+    <body>
+        <h3><a href="./map.html">map</a></h1>
+        <p>Last Packet: <br><div id="lastPacket"></div></p>
+        <table border=1 id="dataTable" cellpadding=10 style="table-layout:fixed;word-wrap:break-word;word-break:break-all;">
+            <tr>
+                <th>TIME</th><th>LAT</th><th>LON</th><th>altitude</th><th>int temp (C)</th><th>ext temp (C)</th><th>pressure (kPa)</th>
+            </tr>
+        </table>
+        <script>
+            var ws = new WebSocket('ws://' + location.host + ':8080/');
+//var ws = new WebSocket('ws://localhost:8080/');
+
+document.getElementById('lastPacket').textContent = "n/a";
+ws.onmessage = function(event) {
+    //packet format: 
+    // RB0012851,142233.05,4633.000,N,11723.000,W,827.4,M,24.0,22.0,774.0,922.7,notCutdown
+    // fields:
+    // address,timestamp,lat,N,lon,W,altitude,M,exttemp,inttemp,altitude,pressure,cutdown
+
+    var nmeaString = event.data;
+
+    var gpgga = nmeaString.split(',');
+
+    var hhmmss = gpgga[1];
+
+    // change from UTC to PST
+    var hh = parseInt(hhmmss.substring(0,2));
+    if(hh > 7) {
+        hh = hh - 7;
+    }
+    else {
+        hh = hh + 17;
+    }
+    var mm = hhmmss.substring(2,4);
+    var ss = hhmmss.substring(4,6);
+    var time = hh + ":" + mm + ":" + ss;
+    var lat = parseFloat(gpgga[2]);
+    var lon = parseFloat(gpgga[4]);
+    var alt = parseFloat(gpgga[10]);
+    var intTemp = parseFloat(gpgga[9]);
+    var extTemp = parseFloat(gpgga[8]);
+    var pressure = parseFloat(gpgga[11]);
+    console.log(pressure);
+    var altFeet = alt * 3.28084;
+
+    var lat_deg = Math.trunc(lat / 100);
+    var lat_min = lat % 100;
+    var lon_deg = Math.trunc(lon / 100);
+    var lon_min = lon % 100;
+
+    var latitude = lat_deg + (lat_min/60);
+    var longitude = lon_deg + (lon_min/60);
+
+    latDir = gpgga[3];
+    lonDir = gpgga[5];
+
+    if(latDir == 'S') {
+        latitude *= -1;
+    }
+    if(lonDir == 'W') {
+        longitude *= -1;
+    }
+
+    var coords = [latitude,longitude];
+
+    var table = document.getElementById("dataTable");
+
+    var newRow = table.insertRow(1);
+
+    var timestamp = newRow.insertCell(0);
+    var latCell = newRow.insertCell(1);
+    var lonCell = newRow.insertCell(2);
+    var altCell = newRow.insertCell(3);
+    var intTempCell = newRow.insertCell(4);
+    var extTempCell = newRow.insertCell(5);
+    var pressureCell = newRow.insertCell(6);
+
+    var nmeaArray = nmeaString.replace(',','<br>')
+    timestamp.innerHTML = time;
+    latCell.innerHTML = parseFloat(latitude).toFixed(3);
+    lonCell.innerHTML = parseFloat(longitude).toFixed(3);
+    altCell.innerHTML = alt + " M <br>(" + parseFloat(altFeet.toFixed(0)) + " ft)";
+    intTempCell.innerHTML = parseFloat(intTemp).toFixed(3);
+    extTempCell.innerHTML = parseFloat(extTemp).toFixed(3);
+    pressureCell.innerHTML = parseFloat(pressure).toFixed(3);
+    document.getElementById('lastPacket').textContent = event.data;
+}
+        </script>
+    </body>
+</html>
+
+
