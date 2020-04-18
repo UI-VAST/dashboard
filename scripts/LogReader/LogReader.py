@@ -3,7 +3,7 @@
 import time
 import os
 import argparse
-from sys import stdout
+import sys
 
 # Parse command line arguments
 parser = argparse.ArgumentParser()
@@ -13,6 +13,7 @@ flags = parser.parse_args()
 # Path to CSV log
 packetPath = os.path.join(flags.dir, 'packets.csv')
    
+print("logreader reading at ",packetPath);
 # Files not currently open for reading
 packet = None
 
@@ -29,7 +30,7 @@ while 1:
             packetEnd = True
         else:
             print(packetLine)
-            stdout.flush()
+            sys.stdout.flush()
     else:
         if os.path.exists(packetPath):
             packet = open(packetPath, 'r')

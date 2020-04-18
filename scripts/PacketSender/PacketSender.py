@@ -10,7 +10,8 @@ import requests
 rawdata="RB0012851,120308.916,4674.12804417,N,11705.4428043,W,827.4,M,72.0,55.0,101.325".split(',')
 
 # url receiving post requests.
-URL="http://michael-atkinson.com/dashboard/PostReceiver/PostReceiver.php"
+# have to make sure this points to our ip.
+URL="http://167.172.123.247/dashboard/PostReceiver/PostReceiver.php"
 
 # encode string in hex
 datahex = (',').join(rawdata).encode('utf-8').hex()
@@ -34,12 +35,14 @@ while 1:
     rawdata[1] = str(float(rawdata[1])+100)
     rawdata[2] = str(float(rawdata[2])+random.uniform(-1,10))
     rawdata[4] = str(float(rawdata[4])+random.uniform(-1,10))
+    rawdata[9] = str(float(rawdata[9])+random.uniform(-10,1))
+    rawdata[6] = str(float(rawdata[6])+random.uniform(0,10));
     params["data"] = (',').join(rawdata).encode('utf-8').hex()
-    print((',').join(rawdata))
+    #print((',').join(rawdata))
 
-    # requests module makes an http post request to provided URL, 
+    # requests module makes an http post request to our URL, 
     # containing our data fields.
-    r = requests.post(url = URL,data=params)
+    r = requests.post(url=URL,data=params)
 
     # returned status code should be 200 for success.
     #print(r.status_code)

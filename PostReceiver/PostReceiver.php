@@ -11,9 +11,9 @@ include_once 'logfile.php';
 //if(1) {     // writing any and all received post requests.  this is dangerous, probably
 // if there's an 'imei' data field, it came from the(a) modem.
 // to be more secure, should check if imei == our specific modem.
-if(isset($_POST['imei'])) {
+//if(isset($_POST['imei'])) {
     //create directory if not exists.
-    if (!file_exists($PacketsPath)) { mkdir($PacketsPath); }
+    if (!file_exists($PacketsPath)) { mkdir($PacketsPath,0777,true); }
 
     //packetsfile contains actual transmitted data; logfile contains all data posted from iridium (imei, serial, datetime etc)
     $packetsFile = fopen($PacketsPath . '/packets.csv','a');
@@ -31,7 +31,7 @@ if(isset($_POST['imei'])) {
     fclose($logFile);
     fclose($packetsFile);
 
-}
+//}
 
 // data is sent encoded as hex bytes.  function to decode it into ascii here.
 function hex2str($hex) {
@@ -42,4 +42,5 @@ function hex2str($hex) {
     return $str;
 }
 
+echo "you shouldn't be here.";
 ?>
