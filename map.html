@@ -46,7 +46,7 @@ ws.onmessage = function(event) {
 
 	var cd = packet.split(',')[packet.split(',').length-1];
 
-	var hhmmss = gpgga[1];
+	var hhmmss = gpgga[2];
 	var hh = parseInt(hhmmss.substring(0,2));
 	if(hh > 7) {
 		hh = hh - 7;
@@ -58,8 +58,8 @@ ws.onmessage = function(event) {
 	var mm = hhmmss.substring(2,4);
 	var ss = hhmmss.substring(4,6);
 	var time = hh + ":" + mm + ":" + ss;
-	var lat = parseFloat(gpgga[2]);
-	var lon = parseFloat(gpgga[4]);
+	var lat = parseFloat(gpgga[3]);
+	var lon = parseFloat(gpgga[5]);
 
 	var lat_deg = Math.trunc(lat / 100);
 	var lat_min = lat % 100;
@@ -69,10 +69,10 @@ ws.onmessage = function(event) {
 	var latitude = lat_deg + (lat_min/60);
 	var longitude = lon_deg + (lon_min/60);
 
-	if(gpgga[3] == 'S') {
+	if(gpgga[4] == 'S') {
 		latitude *= -1;
 	}
-	if(gpgga[5] == 'W') {
+	if(gpgga[6] == 'W') {
 		longitude *= -1;
 	}
 

@@ -22,7 +22,7 @@ ws.onmessage = function(event) {
 
     var gpgga = nmeaString.split(',');
 
-    var hhmmss = gpgga[1];
+    var hhmmss = gpgga[2];
 
     // change from UTC to PST
     var hh = parseInt(hhmmss.substring(0,2));
@@ -35,12 +35,13 @@ ws.onmessage = function(event) {
     var mm = hhmmss.substring(2,4);
     var ss = hhmmss.substring(4,6);
     var time = hh + ":" + mm + ":" + ss;
-    var lat = parseFloat(gpgga[2]);
-    var lon = parseFloat(gpgga[4]);
+
+    var lat = parseFloat(gpgga[3]);
+    var lon = parseFloat(gpgga[5]);
     var alt = parseFloat(gpgga[10]);
-    var intTemp = parseFloat(gpgga[9]);
-    var extTemp = parseFloat(gpgga[8]);
-    var pressure = parseFloat(gpgga[10]);
+    var intTemp = parseFloat(gpgga[10]);
+    var extTemp = parseFloat(gpgga[0]);
+    var pressure = parseFloat(gpgga[12]);
     console.log(pressure);
     var altFeet = alt * 3.28084;
 
@@ -52,8 +53,8 @@ ws.onmessage = function(event) {
     var latitude = lat_deg + (lat_min/60);
     var longitude = lon_deg + (lon_min/60);
 
-    latDir = gpgga[3];
-    lonDir = gpgga[5];
+    latDir = gpgga[4];
+    lonDir = gpgga[6];
 
     if(latDir == 'S') {
         latitude *= -1;

@@ -17,8 +17,8 @@ echo "<?php \$PacketsPath=\"$RISE_DIR/packets/$LABEL/\"; ?>" > $RISE_DIR/PostRec
 
 # also start PacketSender to send fake packets,
 # if testing without iridium transmitting.
-cd $RISE_DIR/scripts/PacketSender
-./PacketSender.py &
+#cd $RISE_DIR/scripts/PacketSender
+#./PacketSender.py &
 # ./PacketSender.sh
 
 # start PacketDownloader

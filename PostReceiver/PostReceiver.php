@@ -26,6 +26,7 @@ include_once 'logfile.php';
 
     //decode data, and write to packetsfile
     $dataPacket = hex2str($_POST['data']);
+    fwrite($logFile,"decoded:" . $dataPacket . "\n");
     
     fwrite($packetsFile,$dataPacket . "\n");
     fclose($logFile);

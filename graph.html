@@ -69,7 +69,7 @@ ws.onmessage = function(event) {
 	if(packetStr != '') {
 		console.log(packetStr);
 		var data = packetStr.split(',');
-		var hhmmss = data[1];
+		var hhmmss = data[2];
 		//UTC -> PST
 		var hh = parseInt(hhmmss.substring(0,2));
 		if(hh > 7) {
@@ -81,9 +81,10 @@ ws.onmessage = function(event) {
 		var mm = hhmmss.substring(2,4);
 		var ss = hhmmss.substring(4,6);
 		var time = hh + ":" + mm + ":" + ss;
-		var intTemp = parseFloat(data[9]);
-		var extTemp = parseFloat(data[8]);
-		var alt = parseFloat(data[6]);
+
+		var intTemp = parseFloat(data[10]);
+		var extTemp = parseFloat(data[9]);
+		var alt = parseFloat(data[7]);
 		let ms = new Date().getMilliseconds();
 		var dt = new Date(yr,mon,dy,hh,mm,ss,ms);
 		tempTable.addRow([dt,intTemp,extTemp]);
